@@ -1,145 +1,103 @@
-# chatbot_with_rasa
-Building an interactive chatbot for restaurant app using Rasa framework
+# Foodie Restaurant Chatbot
 
-An Indian startup named 'Foodie' wants to build a conversational bot (chatbot) which can help users discover restaurants across several Indian cities. You have been hired as the lead data scientist for creating this product.
+An Indian startup named 'Foodie' wants to build a conversational bot (chatbot) which can help users discover restaurants across several Indian cities.
 
- 
+The main purpose of the bot is to help users discover restaurants quickly and efficiently and to provide a good restaurant discovery experience.
 
-The main purpose of the bot is to help users discover restaurants quickly and efficiently and to provide a good restaurant discovery experience. The project brief provided to you is as follows.
-
- 
-
-The bot takes the following inputs from the user:
-
-City: Take the input from the customer as a text field. For example:
-
-Bot: In which city are you looking for restaurants?
-
-User: anywhere in Delhi
-
- 
-
- 
-
- 
-
-Important Notes: 
-
-Assume that Foodie works only in Tier-1 and Tier-2 cities. You can use the current HRA classification of the cities from here. Under the section 'current classification' on this page, the table categorizes cities as X, Y and Z. Consider 'X ' cities as tier-1 and 'Y' as tier-2. 
-The bot should be able to identify common synonyms of city names, such as Bangalore/Bengaluru, Mumbai/Bombay etc.
- 
-
-Your chatbot should provide results for tier-1 and tier-2 cities only, while for tier-3 cities, it should reply back with something like "We do not operate in that area yet".
-
- 
-
-Cuisine Preference: Take the cuisine preference from the customer. The bot should list out the following six cuisine categories (Chinese, Mexican, Italian, American, South Indian & North Indian) and the customer can select any one out of that. Following is an example for the same:
-
-Bot: What kind of cuisine would you prefer?
-
-Chinese
-Mexican
-Italian
-American
-South Indian
-North Indian
-User: I’ll prefer Italian!
-
- 
-
- 
-
- 
-
- 
-
- 
-
- 
-
- 
-
- 
-
- 
-
- 
-
- 
-
- 
-
-Average budget for two people: Segment the price range (average budget for two people) into three price categories: lesser than 300, 300 to 700 and more than 700. The bot should ask the user to select one of the three price categories. For example:
-
-Bot: What price range are you looking at?
-
-Lesser than Rs. 300
-Rs. 300 to 700
-More than 700
-User: in range of 300 to 700
-
- 
-
- 
-
- 
-
- 
-
- 
-
- 
-
- 
-
- 
-
-While showing the results to the user, the bot should display the top 5 restaurants in a sorted order (descending) of the average Zomato user rating (on a scale of 1-5, 5 being the highest). The format should be: {restaurant_name} in {restaurant_address} has been rated {rating}.
+Zomato apis are used for searching the restaurants https://developers.zomato.com/documentation#/
 
 
-Finally, the bot should ask the user whether he/she wants the details of the top 10 restaurants on email. If the user replies 'yes', the bot should ask for user’s email id and then send it over email. Else, just reply with a 'goodbye' message. The mail should have the following details for each restaurant:
+### Prerequisites
 
-Restaurant Name
-Restaurant locality address
-Average budget for two people
-Zomato user rating
-You can refer to the following links on how to send emails through Python:
+1. Python (requires Python 3.6 or 3.7)
+2. Visual studio or Pycharm for python development
+3. Create and activate a virtual environment
+4. MacOS environment
+5. Create a virtual environment : `python3 -m venv --system-site-packages ./venv`
+6. Activate the virtual Environment: `source ./venv/bin/activate`
 
-Python Email Package
-Python Flask Mail
-(A heads up: You'll have to enable secure access on Gmail to allow Python to send emails).
+### Installation:
+Install Rasa NLU (version 1.10.7) and Spacy (version 2.3.1) using the following code:
 
- 
+cd path <path to project>
 
-You have been given some sample conversational stories in the ‘test’ file. Look at the stories and try to observe entities, intents, dialogue-flow which may be useful to train the NLU and also the dialogue flow.
+`$pip install rasa`
+`$pip install spacy`
+`$python -m spacy download en_core_web_md`
+`$python -m spacy link en_core_web_md en`
 
-Sample conversational stories
-Download
- 
+###### How to find rasa and spacy version
 
-Goals of this Project
-In this project, you will build a chatbot for ‘Foodie’ and then deploy it on Slack. The folder with starter codes has already been shared with you in session-1. You need to accomplish the following in the project:
+```
+$python -c "import rasa; print(rasa.__version__)"
+1.10.7
+$python -c "import spacy; print(spacy.__version__)"
+2.3.1
+```
 
-NLU training: You can use rasa-nlu-trainer to create more training examples for entities and intents. Try using regex features and synonyms for extracting entities.
+### Project Structure
 
-Build actions for the bot. Read through the Zomato API documentation to extract the features such as the average price for two people and restaurant’s user rating. You also need to build an ‘action’ for sending emails from Python.
+cd path <path to project>
 
-Creating more stories: Use train_online.py file to create more stories. Refer to the sample conversational stories provided above.  Your bot will be evaluated on something similar to the test stories shared.
+Project includes the following files:
+1. __init__.py: an empty file that helps python find actions
+2. actions.py: code for custom actions
+3. config.yml: configuration of NLU and Core models
+4. credentials.yml: details for connecting to other services
+5. data/nlu.md: NLU training data
+6. data/stories.md: traininig stories
+7. domain.yml: chatbot assistant’s domain
+8. endpoints.yml: details for connecting to channels like messenger etc.
+9. models/<timestamp>.tar.gz: initial model
 
-Deployment (Optional): Deploy the model on Slack. You can create a new workspace or deploy it on an existing workspace (if you already use Slack).
 
- 
+### Train the nlu data & core conversational flow
+Whenever new NLU or Core data is added, or updates to domain or configuration, we need to re-train a neural network on the example stories and NLU data. To do this, run the command below which calls the Rasa Core and NLU train functions and store the trained model into the models/ directory.
 
-You’ll be evaluated on the following submission:
+`$rasa train && rasa run actions`
 
-Submit the entire folder of your chatbot code as a zip file: It should have all the data files, python files with codes, your saved models etc. The model should run on our CLI without any modifications. Your model will be evaluated on some test cases, similar to the ones shared with you.
+### Talk to your assistant
+Once the core model training is completed, the next step is to try it out. Start talking to your assistant by running:
 
-Note:  Your chatbot will be evaluated through Command Prompt Line, not through Slack or any other channel. Also, ensure that you are mentioning all the updated versions used for your Chatbot project in a Read Me Text File as part of the Final Submission Folder.
+`$rasa shell`
 
- 
+### Train dialogue flow online and add stories
+Generated stories can be exported and added to stories.md. Retrain the model and check dialogue flow.
 
-Optional section (Non-evaluative):
+`$rasa interactive`
 
-Chatbot deployment on Slack:
-
-Upload a video on Youtube which demonstrates that your chatbot works on Slack. In the video, try testing on a few complex stories (i.e. demonstrate that your bot can handle complexity, handle errors gracefully etc.). The video shouldn’t be more than 10 mins long. Share the youtube link in your submission.  You can see how to record a screen-sharing video using YouTube (without any external screen sharing or audio recording software) here.
+### Example in a rasa shell
+Some sample conversations are as follows:
+```
+User: Hi
+Bot: Hey, How is it going. How May I help you Today.
+User: Can you suggest some good restaurants in bangalore
+Bot: What kind of cuisine would you like?
+   1: Chinese
+   2: Mexican
+   3: Italian
+   4: American
+   5: South Indian
+ » 6: North Indian
+User: North Indian
+Bot: What budget are you looking at?
+   1: Lesser than Rs. 300
+ » 2: Rs. 300 to 700
+   3: More than 700
+User: 300 to 700
+Bot: Here are our top recommendations:
+---------------
+1. Royal Andhra Spice in OSR Hotels, 60 Feet Road, Near BEML Bus Depot, Rajarajeshwari Nagar, Bangalore has been rated 4.5
+2. Manjit Da Dhaba in 107, 1st Floor, Wheeler Road, Near Railway Cross, Cox Town, Frazer Town, Bangalore has been rated 4.4
+3. Mumbai Tiffin in 2345, 17th Cross, Opposite Water Tank, Sector 1, HSR, Bangalore has been rated 4.3
+4. Grill Biryanis in 9, Jalahalli Cross Circle, Jalahalli, Bangalore has been rated 4.1
+5. Hyderabadi Spice in 70/1, Opposite Wipro Technologies Gate 12, Electronic City, Bangalore has been rated 4.1
+---------------
+Bot: Do you want a list of restaurants in your email?
+ » 1: Yes
+   2: No
+User: Yes
+Bot: Please, enter your email id.
+User: example@gmail.com
+Bot: **** Email sent. Happy dining. ****
+```
